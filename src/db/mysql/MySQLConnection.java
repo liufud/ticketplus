@@ -167,9 +167,9 @@ public class MySQLConnection implements DBConnection {
 	}
 
 	@Override
-	public List<Item> searchItems(double lat, double lon, String term) {
+	public List<Item> searchItems(double lat, double lon, String keyword) {
 		TicketMasterClient client = new TicketMasterClient();
-		List<Item> items = client.search(lat, lon, null);
+		List<Item> items = client.search(lat, lon, keyword);
 		for (Item item : items) {
 			saveItem(item);
 		}
@@ -213,13 +213,44 @@ public class MySQLConnection implements DBConnection {
 
 	@Override
 	public String getFullname(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		if (conn == null) {
+			return "";
+		}
+		String name = "";
+		try {
+			String sql = "SELECT first_name, last_name FROM Users WHERE user_id = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+			ps.execute();
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				name = rs.getString("first_name") + " " + rs.getString("last_name");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return name;
 	}
 
 	@Override
 	public boolean verifyLogin(String userId, String password) {
-		// TODO Auto-generated method stub
+		if (conn == null) {
+			return false;
+		}
+		try {
+			String sql = "SELECT * FROM Users WHERE user_id = ? AND password = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+			ps.setString(2, password);
+			ps.execute();
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
