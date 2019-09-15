@@ -1,6 +1,7 @@
 package rpc;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +13,9 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import entity.Item;
+import recommendation.GeoRecommendation;
 
 /**
  * Servlet implementation class RecommendEvent
@@ -35,23 +39,26 @@ public class RecommendEvent extends HttpServlet {
 		// TODO Auto-generated method stub
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 		
-		// allow access only if session exists
+		// allow access only if session exists		
 		HttpSession session = request.getSession(false);
 		if (session == null) {
 			response.setStatus(403);
 			return;
 		}
 		
-		response.setContentType("application/json");
-		JSONArray array = new JSONArray();
+		String userId = session.getAttribute("user_id").toString();
+		// String userId = request.getParameter("user_id");
 
-		try {
-			array.put(new JSONObject().put("username", "abcd").put("address", "San Francisco").put("time", "01/01/2017"));
-			array.put(new JSONObject().put("username", "1234").put("address", "San Jose").put("time", "01/02/2017"));
-		} catch (JSONException e) {
-			e.printStackTrace();
+		double lat = Double.parseDouble(request.getParameter("lat"));
+		double lon = Double.parseDouble(request.getParameter("lon"));
+
+		GeoRecommendation recommendation = new GeoRecommendation();
+		List<Item> items = recommendation.recommendItems(userId, lat, lon);
+		JSONArray array = new JSONArray();
+		for (Item item : items) {
+			array.put(item.toJSONObject());
 		}
-		JSONHelper.writeJsonArray(response, array);	
+		JSONHelper.writeJsonArray(response, array);
 	}
 
 	/**
