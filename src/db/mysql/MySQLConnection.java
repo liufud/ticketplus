@@ -241,7 +241,7 @@ public class MySQLConnection implements DBConnection {
 		}
 		String name = "";
 		try {
-			String sql = "SELECT first_name, last_name FROM Users WHERE user_id = ?";
+			String sql = "SELECT first_name, last_name FROM users WHERE user_id = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, userId);
 			ps.execute();
@@ -261,7 +261,7 @@ public class MySQLConnection implements DBConnection {
 			return false;
 		}
 		try {
-			String sql = "SELECT * FROM Users WHERE user_id = ? AND password = ?";
+			String sql = "SELECT * FROM users WHERE user_id = ? AND password = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, userId);
 			ps.setString(2, password);
