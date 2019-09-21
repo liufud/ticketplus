@@ -69,7 +69,7 @@ public class SearchEvent extends HttpServlet {
 		double lon = Double.parseDouble(request.getParameter("lon"));
 		String term = request.getParameter("term");
 
-		DBConnection connection = DBConnectionFactory.getConnection("mysql");
+		DBConnection connection = DBConnectionFactory.getConnection();
 
 		try {
 			List<Item> items = connection.searchItems(lat, lon, term);
