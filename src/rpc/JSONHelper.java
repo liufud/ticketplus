@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import entity.Item;
+
+import java.util.*;
+
 public class JSONHelper {
 	public static void writeJsonArray(HttpServletResponse response, JSONArray array) throws IOException {
 		response.setContentType("application/json");
@@ -18,6 +22,18 @@ public class JSONHelper {
 	public static void writeJsonObject(HttpServletResponse response, JSONObject obj) throws IOException {
 		response.setContentType("application/json");
 		response.getWriter().print(obj);
+	}
+	
+	public static JSONArray getJSONArray(List<Item> items) {
+		JSONArray result = new JSONArray();
+		try {
+			for (Item item : items) {
+				result.put(item.toJSONObject());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	public static JSONObject readJSONObject(HttpServletRequest request) {
